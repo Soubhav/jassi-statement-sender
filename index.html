@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jassi's Statement Sender</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Weekly Statement Sender</h1>
+            <p class="subtitle">Fetch customer data from Google Sheets & send via WhatsApp</p>
+        </header>
+
+        <!-- Demo Banner -->
+        <div id="demo-banner" class="demo-banner hidden">
+            Using sample data for demo — connect Google Sheets to go live
+        </div>
+
+        <!-- Step 0: First-time Setup -->
+        <section id="setup-section" class="card hidden">
+            <h2>One-Time Setup</h2>
+            <p class="setup-hint">You only need to do this once. Your settings are saved in this browser.</p>
+
+            <div class="form-group">
+                <label for="api-key-input">Google API Key</label>
+                <input type="text" id="api-key-input" placeholder="AIzaSy...">
+                <span class="form-help">From Google Cloud Console → Credentials</span>
+            </div>
+
+            <div class="form-group">
+                <label for="sheet-id-input">Google Sheet ID</label>
+                <input type="text" id="sheet-id-input" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
+                <span class="form-help">The long string in your Google Sheet URL between /d/ and /edit</span>
+            </div>
+
+            <button id="save-setup-btn" class="btn btn-primary">Save & Connect</button>
+        </section>
+
+        <!-- Step 1: Fetch Data -->
+        <section id="fetch-section" class="card hidden">
+            <div class="fetch-area">
+                <div class="fetch-icon">📊</div>
+                <p class="fetch-text">Connected to your Google Sheet</p>
+                <p id="sheet-id-display" class="fetch-hint"></p>
+                <button id="fetch-btn" class="btn btn-primary">Fetch Latest Data</button>
+                <button id="change-settings-btn" class="btn-link">Change settings</button>
+            </div>
+            <div id="loading-spinner" class="spinner hidden">
+                <div class="spinner-circle"></div>
+                <p>Fetching data from Google Sheets...</p>
+            </div>
+        </section>
+
+        <!-- Step 2: Preview -->
+        <section id="preview-section" class="card hidden">
+            <div class="preview-header">
+                <h2>Customers Found</h2>
+                <span id="customer-count" class="badge">0</span>
+            </div>
+
+            <div id="customer-list" class="customer-list"></div>
+
+            <!-- Send Buttons -->
+            <div class="actions">
+                <button id="send-all-btn" class="btn btn-primary">
+                    Send to All
+                </button>
+                <div class="send-one-wrapper">
+                    <select id="customer-select">
+                        <option value="">Pick a customer...</option>
+                    </select>
+                    <button id="send-one-btn" class="btn btn-secondary" disabled>
+                        Send to Selected
+                    </button>
+                </div>
+            </div>
+
+            <div class="actions" style="margin-top: 8px;">
+                <button id="refetch-btn" class="btn btn-outline">Refresh Data</button>
+            </div>
+        </section>
+
+        <!-- Status -->
+        <section id="status-section" class="card hidden">
+            <h2>Sending Status</h2>
+            <div id="status-log" class="status-log"></div>
+            <button id="back-btn" class="btn btn-outline">Back to Customers</button>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

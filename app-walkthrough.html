@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Statement Sender — App Walkthrough</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fff;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        /* ── Cover Page ── */
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #075e54 0%, #25d366 100%);
+            color: #fff;
+            text-align: center;
+            padding: 40px;
+            page-break-after: always;
+        }
+        .cover h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+        .cover .tagline {
+            font-size: 20px;
+            opacity: 0.9;
+            max-width: 500px;
+            margin-bottom: 40px;
+        }
+        .cover .meta {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .cover .meta span {
+            display: block;
+            margin: 4px 0;
+        }
+        .cover-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+        }
+
+        /* ── Page Layout ── */
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            page-break-after: always;
+        }
+        .page:last-child {
+            page-break-after: avoid;
+        }
+
+        /* ── Section Header ── */
+        .section-label {
+            display: inline-block;
+            background: #075e54;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        .page h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #075e54;
+            margin-bottom: 8px;
+        }
+        .page .page-desc {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 32px;
+            max-width: 650px;
+        }
+
+        /* ── Phone Mockup Frame ── */
+        .phone-frame {
+            width: 375px;
+            margin: 0 auto 32px;
+            border: 3px solid #222;
+            border-radius: 36px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            background: #f0f2f5;
+        }
+        .phone-notch {
+            height: 32px;
+            background: #222;
+            border-radius: 0 0 18px 18px;
+            width: 150px;
+            margin: 0 auto;
+        }
+        .phone-screen {
+            padding: 16px;
+            min-height: 500px;
+        }
+
+        /* ── App UI Components (inside mockup) ── */
+        .mock-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .mock-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #075e54;
+        }
+        .mock-header p {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+        .mock-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .mock-banner {
+            background: #fff3cd;
+            color: #856404;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        /* Drop zone */
+        .mock-dropzone {
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 30px 16px;
+            text-align: center;
+        }
+        .mock-dropzone .icon { font-size: 40px; margin-bottom: 8px; }
+        .mock-dropzone .label { font-size: 14px; font-weight: 600; color: #333; }
+        .mock-dropzone .hint { font-size: 11px; color: #999; margin-top: 4px; }
+
+        /* Setup form */
+        .mock-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            color: #999;
+            background: #fff;
+        }
+        .mock-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .mock-help {
+            font-size: 10px;
+            color: #999;
+            margin: -8px 0 12px;
+        }
+
+        /* Buttons */
+        .mock-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .mock-btn-primary { background: #25d366; color: #fff; }
+        .mock-btn-secondary { background: #075e54; color: #fff; }
+        .mock-btn-outline { background: transparent; border: 2px solid #075e54; color: #075e54; }
+
+        /* Customer rows */
+        .mock-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+        .mock-row:last-child { border-bottom: none; }
+        .mock-name { font-weight: 600; }
+        .mock-phone { font-size: 10px; color: #999; }
+        .mock-balance { font-weight: 700; }
+        .mock-negative { color: #e53935; }
+        .mock-positive { color: #2e7d32; }
+        .mock-badge {
+            background: #25d366;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .mock-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .mock-preview-header h4 { font-size: 16px; }
+
+        /* Select */
+        .mock-select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #999;
+            background: #fff;
+            margin-bottom: 8px;
+        }
+
+        /* Status items */
+        .mock-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        /* Fetch area */
+        .mock-fetch {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .mock-fetch .icon { font-size: 40px; margin-bottom: 10px; }
+        .mock-fetch .label { font-size: 14px; font-weight: 600; color: #333; }
+        .mock-fetch .hint { font-size: 10px; color: #999; margin: 4px 0 16px; }
+        .mock-link {
+            background: none;
+            border: none;
+            color: #075e54;
+            font-size: 11px;
+            text-decoration: underline;
+            display: block;
+            margin: 8px auto 0;
+        }
+
+        /* ── Explanation Box ── */
+        .explanation {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        .explanation h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .explanation ul {
+            padding-left: 20px;
+        }
+        .explanation li {
+            font-size: 15px;
+            color: #444;
+            margin-bottom: 8px;
+        }
+        .explanation li strong {
+            color: #075e54;
+        }
+
+        /* ── Flow Diagram ── */
+        .flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 32px 0;
+            flex-wrap: wrap;
+        }
+        .flow-step {
+            background: #f0faf4;
+            border: 2px solid #25d366;
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: center;
+            min-width: 140px;
+        }
+        .flow-step .num {
+            background: #25d366;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            margin: 0 auto 8px;
+        }
+        .flow-step .text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #075e54;
+        }
+        .flow-arrow {
+            font-size: 24px;
+            color: #25d366;
+        }
+
+        /* ── Two Column Layout ── */
+        .two-col {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        .two-col .col-mockup {
+            flex: 0 0 375px;
+        }
+        .two-col .col-text {
+            flex: 1;
+            padding-top: 20px;
+        }
+
+        /* ── Callout Box ── */
+        .callout {
+            background: #f0faf4;
+            border-left: 4px solid #25d366;
+            padding: 16px 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+        .callout strong {
+            color: #075e54;
+        }
+
+        /* ── Print Styles ── */
+        @media print {
+            .page { page-break-after: always; padding: 40px 30px; }
+            .phone-frame { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        }
+
+        @media (max-width: 800px) {
+            .two-col { flex-direction: column; }
+            .two-col .col-mockup { flex: auto; }
+            .phone-frame { width: 100%; max-width: 375px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ════════════════════════════════════ COVER ════════════════════════════════════ -->
+    <div class="cover">
+        <div class="cover-icon">💬</div>
+        <h1>Weekly Statement Sender</h1>
+        <p class="tagline">A simple app that lets you send each customer their personal account statement via WhatsApp — in one click.</p>
+        <div class="meta">
+            <span>App Walkthrough & Screen Guide</span>
+            <span>Prepared for Jassi • March 2026</span>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════ HOW IT WORKS ════════════════════════════════════ -->
+    <div class="page">
+        <span class="section-label">Overview</span>
+        <h2>How It Works</h2>
+        <p class="page-desc">The app connects to your Google Sheet, reads all customer data in real time, and lets you send WhatsApp messages — no file uploading needed, ever.</p>
+
+        <div class="flow">
+            <div class="flow-step">
+                <div class="num">1</div>
+                <div class="text">Open the App</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="num">2</div>
+                <div class="text">Fetch Latest Data</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="num">3</div>
+                <div class="text">Review Customers</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="num">4</div>
+                <div class="text">Send on WhatsApp</div>
+            </div>
+        </div>
+
+        <div class="callout">
+            <strong>No uploading, no typing, no mistakes.</strong> Just open, click, and send. The app reads your Google Sheet live — any changes you make there show up instantly.
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════ SCREEN 1: SETUP ════════════════════════════════════ -->
+    <div class="page">
+        <span class="section-label">Screen 1</span>
+        <h2>One-Time Setup</h2>
+        <p class="page-desc">This screen only appears the first time you use the app. You enter two things, and you're done forever.</p>
+
+        <div class="two-col">
+            <div class="col-mockup">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="mock-header">
+                            <h3>Weekly Statement Sender</h3>
+                            <p>Fetch customer data from Google Sheets & send via WhatsApp</p>
+                        </div>
+                        <div class="mock-card">
+                            <h4 style="font-size:16px; margin-bottom:4px;">One-Time Setup</h4>
+                            <p style="font-size:11px; color:#666; margin-bottom:16px;">You only need to do this once. Your settings are saved in this browser.</p>
+                            <span class="mock-label">Google API Key</span>
+                            <div class="mock-input">AIzaSy...</div>
+                            <p class="mock-help">From Google Cloud Console → Credentials</p>
+                            <span class="mock-label">Google Sheet ID</span>
+                            <div class="mock-input">1BxiMVs0XRA5nF...</div>
+                            <p class="mock-help">The long string in your Google Sheet URL</p>
+                            <div class="mock-btn mock-btn-primary">Save & Connect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-text">
+                <div class="explanation">
+                    <h4>What happens here:</h4>
+                    <ul>
+                        <li><strong>Google API Key</strong> — A free key from Google that lets the app read your spreadsheet. You create it once in Google Cloud Console.</li>
+                        <li><strong>Google Sheet ID</strong> — The long code in your spreadsheet's URL. Just copy-paste it.</li>
+                        <li><strong>Save & Connect</strong> — Saves both values in your browser. You'll never see this screen again unless you click "Change settings".</li>
+                    </ul>
+                    <div class="callout">
+                        <strong>You only do this once.</strong> After saving, the app remembers your settings every time you come back.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════ SCREEN 2: FETCH ════════════════════════════════════ -->
+    <div class="page">
+        <span class="section-label">Screen 2</span>
+        <h2>Fetch Latest Data</h2>
+        <p class="page-desc">This is your home screen every time you open the app. One button pulls the latest data from your Google Sheet.</p>
+
+        <div class="two-col">
+            <div class="col-mockup">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="mock-header">
+                            <h3>Weekly Statement Sender</h3>
+                            <p>Fetch customer data from Google Sheets & send via WhatsApp</p>
+                        </div>
+                        <div class="mock-card">
+                            <div class="mock-fetch">
+                                <div class="icon">📊</div>
+                                <div class="label">Connected to your Google Sheet</div>
+                                <div class="hint">Sheet ID: 1BxiMVs0XRA5nF...</div>
+                                <div class="mock-btn mock-btn-primary" style="max-width:250px; margin:0 auto;">Fetch Latest Data</div>
+                                <div class="mock-link">Change settings</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-text">
+                <div class="explanation">
+                    <h4>What happens here:</h4>
+                    <ul>
+                        <li><strong>Fetch Latest Data</strong> — Connects to your Google Sheet and pulls all customer names, phone numbers, balances, and transactions in real time.</li>
+                        <li><strong>Sheet ID shown</strong> — Confirms which spreadsheet is connected so you know you're looking at the right one.</li>
+                        <li><strong>Change settings</strong> — Takes you back to the setup screen if you ever need to switch the API key or spreadsheet.</li>
+                    </ul>
+                    <div class="callout">
+                        <strong>Always fresh data.</strong> Any changes you make in Google Sheets (adding a customer, updating balances) will show up the moment you click this button.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════ SCREEN 3: PREVIEW ════════════════════════════════════ -->
+    <div class="page">
+        <span class="section-label">Screen 3</span>
+        <h2>Customer Preview</h2>
+        <p class="page-desc">After fetching, you see all your customers with their balances. This is where you decide who gets a message.</p>
+
+        <div class="two-col">
+            <div class="col-mockup">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="mock-header">
+                            <h3>Weekly Statement Sender</h3>
+                            <p>Fetch customer data from Google Sheets & send via WhatsApp</p>
+                        </div>
+                        <div class="mock-banner">Using sample data for demo — connect Google Sheets to go live</div>
+                        <div class="mock-card">
+                            <div class="mock-preview-header">
+                                <h4>Customers Found</h4>
+                                <span class="mock-badge">6</span>
+                            </div>
+                            <div class="mock-row">
+                                <div><span class="mock-name">Ravi Kumar</span><br><span class="mock-phone">9876543210</span></div>
+                                <span class="mock-balance mock-negative">-₹2,400</span>
+                            </div>
+                            <div class="mock-row">
+                                <div><span class="mock-name">Amit Singh</span><br><span class="mock-phone">9812345678</span></div>
+                                <span class="mock-balance mock-positive">₹1,500</span>
+                            </div>
+                            <div class="mock-row">
+                                <div><span class="mock-name">Deepak Sharma</span><br><span class="mock-phone">9988776655</span></div>
+                                <span class="mock-balance mock-negative">-₹5,200</span>
+                            </div>
+                            <div class="mock-row">
+                                <div><span class="mock-name">Gurpreet Kaur</span><br><span class="mock-phone">9871234567</span></div>
+                                <span class="mock-balance mock-negative">-₹800</span>
+                            </div>
+                            <div class="mock-row">
+                                <div><span class="mock-name">Sunil Verma</span><br><span class="mock-phone" style="color:#e53935;">No phone number</span></div>
+                                <span class="mock-balance mock-negative">-₹1,100</span>
+                            </div>
+                            <div style="margin-top:16px;">
+                                <div class="mock-btn mock-btn-primary">Send to All</div>
+                                <div class="mock-select">Pick a customer...</div>
+                                <div class="mock-btn mock-btn-secondary">Send to Selected</div>
+                                <div class="mock-btn mock-btn-outline" style="margin-top:4px;">Refresh Data</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-text">
+                <div class="explanation">
+                    <h4>What happens here:</h4>
+                    <ul>
+                        <li><strong>Customer list</strong> — Shows every customer found in your spreadsheet, their phone number, and their current net balance.</li>
+                        <li><strong>Red = owes money</strong> — Negative balances are shown in red so you can spot them instantly.</li>
+                        <li><strong>Green = in credit</strong> — Positive balances appear in green.</li>
+                        <li><strong>"No phone number"</strong> — If a customer doesn't have a phone number in the sheet, it warns you. WhatsApp won't open for them.</li>
+                        <li><strong>Send to All</strong> — Opens WhatsApp for every customer, one by one, with their personal message pre-filled.</li>
+                        <li><strong>Pick a customer → Send to Selected</strong> — Choose one person from the dropdown and send only to them.</li>
+                        <li><strong>Refresh Data</strong> — Re-fetches the latest data from Google Sheets without leaving this screen.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════ SCREEN 4: SENDING STATUS ════════════════════════════════════ -->
+    <div class="page">
+        <span class="section-label">Screen 4</span>
+        <h2>Sending Status</h2>
+        <p class="page-desc">After clicking send, this screen tracks what happened for each customer.</p>
+
+        <div class="two-col">
+            <div class="col-mockup">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="mock-header">
+                            <h3>Weekly Statement Sender</h3>
+                            <p>Fetch customer data from Google Sheets & send via WhatsApp</p>
+                        </div>
+                        <div class="mock-card">
+                            <h4 style="font-size:16px; margin-bottom:12px;">Sending Status</h4>
+                            <div class="mock-status">
+                                <span>✅</span> Ravi Kumar — WhatsApp opened
+                            </div>
+                            <div class="mock-status">
+                                <span>✅</span> Amit Singh — WhatsApp opened
+                            </div>
+                            <div class="mock-status">
+                                <span>✅</span> Deepak Sharma — WhatsApp opened
+                            </div>
+                            <div class="mock-status">
+                                <span>✅</span> Gurpreet Kaur — WhatsApp opened
+                            </div>
+                            <div class="mock-status">
+                                <span>✅</span> Harjeet Gill — WhatsApp opened
+                            </div>
+                            <div class="mock-status">
+                                <span>⚠️</span> Sunil Verma — No phone number
+                            </div>
+                            <div style="margin-top:16px;">
+                                <div class="mock-btn mock-btn-outline">Back to Customers</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-text">
+                <div class="explanation">
+                    <h4>What happens here:</h4>
+                    <ul>
+                        <li><strong>✅ WhatsApp opened</strong> — The app successfully opened a WhatsApp chat for this customer with a pre-filled message. You just need to hit "Send" in WhatsApp.</li>
+                        <li><strong>⚠️ No phone number</strong> — This customer doesn't have a phone number in the spreadsheet, so WhatsApp couldn't be opened. Add their number to the sheet and try again.</li>
+                        <li><strong>Back to Customers</strong> — Returns you to the customer list if you want to send to someone else or refresh the data.</li>
+                    </ul>
+                    <div class="callout">
+                        <strong>What the WhatsApp message looks like:</strong><br><br>
+                        <span style="font-size:13px; white-space:pre-line; color:#333;">Hi Ravi Kumar, here's your weekly account summary:
+
+Net Balance: -₹2,400
+Week: 12 Mar – 19 Mar
+
+Transaction History:
+• 18 Mar — Lost — ₹800
+• 20 Mar — Lost — ₹1,200
+• 22 Mar — Lost — ₹400
+
+For any questions, contact Jassi.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════ SUMMARY ════════════════════════════════════ -->
+    <div class="page">
+        <span class="section-label">Summary</span>
+        <h2>What You Need</h2>
+        <p class="page-desc">Here's everything required to go live — it's a one-time setup that takes about 10 minutes.</p>
+
+        <div style="max-width:650px;">
+            <div class="callout" style="margin-bottom:16px;">
+                <strong>1. Google Sheet</strong><br>
+                Your existing spreadsheet with customer tabs, an "All Accounts" sheet (with phone numbers), and a "Net Balance" sheet. Share it as "Anyone with the link — Viewer".
+            </div>
+            <div class="callout" style="margin-bottom:16px;">
+                <strong>2. Google API Key (free)</strong><br>
+                Go to Google Cloud Console → Create a project → Enable "Google Sheets API" → Create an API key under Credentials. No billing needed.
+            </div>
+            <div class="callout" style="margin-bottom:16px;">
+                <strong>3. That's it.</strong><br>
+                Open the app, enter the key and sheet ID once, and you're set. Every Sunday, just open the app, click "Fetch", and send.
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:48px; padding:32px; background:#f0faf4; border-radius:16px;">
+            <p style="font-size:20px; font-weight:700; color:#075e54; margin-bottom:8px;">Ready to go live?</p>
+            <p style="font-size:15px; color:#555;">Share your Google Sheet and we'll connect everything in minutes.</p>
+        </div>
+    </div>
+
+</body>
+</html>
